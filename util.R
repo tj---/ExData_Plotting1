@@ -10,11 +10,16 @@ load_data <- function()
 	# Read the first line, just to get hold of column names
 	col_data <- read.table(f_con, nrows = 1, sep = ';', header = TRUE)
 	# As 2 lines have already been read, skip (66638 - 2 - 1) lines and read 2880 lines
-	data <- read.table(f_con, skip = 66635, nrows = 2880, sep = ';')
+	data <- read.table(f_con, skip = 66635, nrows = 2880, sep = ';', stringsAsFactors = FALSE)
 	# Set the column names from the 1 row df to this df (just for convinience)
 	colnames(data) <- colnames(col_data)
 	close(f_con)
 	# Remove the col_data as this is no londer needed
 	remove(col_data)
+	
+	# Combine the date and time columns
+	data$DateTime <- paste(data$Date, data$Time, sep = " ")
+	data$DateTime <- strptime(data$DateTime, format = "%d/%m/%Y %H:%M:%S")
+	
 	return (data)
 }
